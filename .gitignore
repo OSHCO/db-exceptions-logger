@@ -6,3 +6,4 @@ app/sto
 .vscode/*
 tests/.phpunit.result.cache
 */config/*
+!/oshco/config/app-config-testing.json
