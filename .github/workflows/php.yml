@@ -31,7 +31,7 @@ jobs:
       with:
         php-version: 8.3
         extensions: mbstring, sqlsrv, iconv
-        tools: phpunit, composer
+        tools: phpunit:9.6.19, composer:2.7.3
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress

@@ -35,5 +35,13 @@
     "smtp-connections":{
     },
     "database-connections":{
+        "exceptions-logger":{
+            "type":"mssql",
+            "host":"localhost",
+            "port":1433,
+            "username":"sa",
+            "database":"testing",
+            "password":"1234567890@Eu"
+        }
     }
 }
