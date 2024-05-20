@@ -65,11 +65,23 @@ class SystemException implements JsonI {
      **/
     private $message;
     /**
+     * The attribute which is mapped to the column 'parameters'.
+     * 
+     * @var string
+     **/
+    private $parameters;
+    /**
      * The attribute which is mapped to the column 'trace'.
      * 
      * @var string
      **/
     private $trace;
+    /**
+     * The attribute which is mapped to the column 'url'.
+     * 
+     * @var string
+     **/
+    private $url;
     /**
      * Returns the value of the attribute 'class'.
      * 
@@ -165,6 +177,17 @@ class SystemException implements JsonI {
         return $this->message;
     }
     /**
+     * Returns the value of the attribute 'parameters'.
+     * 
+     * The value of the attribute is mapped to the column which has
+     * the name 'parameters'.
+     * 
+     * @return string The value of the attribute.
+     **/
+    public function getParameters() {
+        return $this->parameters;
+    }
+    /**
      * Returns the value of the attribute 'trace'.
      * 
      * The value of the attribute is mapped to the column which has
@@ -174,6 +197,17 @@ class SystemException implements JsonI {
      **/
     public function getTrace() {
         return $this->trace;
+    }
+    /**
+     * Returns the value of the attribute 'url'.
+     * 
+     * The value of the attribute is mapped to the column which has
+     * the name 'url'.
+     * 
+     * @return string The value of the attribute.
+     **/
+    public function getUrl() {
+        return $this->url;
     }
     /**
      * Sets the value of the attribute 'class'.
@@ -264,6 +298,17 @@ class SystemException implements JsonI {
         $this->message = $message;
     }
     /**
+     * Sets the value of the attribute 'parameters'.
+     * 
+     * The value of the attribute is mapped to the column which has
+     * the name 'parameters'.
+     * 
+     * @param $parameters string The new value of the attribute.
+     **/
+    public function setParameters($parameters) {
+        $this->parameters = $parameters;
+    }
+    /**
      * Sets the value of the attribute 'trace'.
      * 
      * The value of the attribute is mapped to the column which has
@@ -273,6 +318,17 @@ class SystemException implements JsonI {
      **/
     public function setTrace($trace) {
         $this->trace = $trace;
+    }
+    /**
+     * Sets the value of the attribute 'url'.
+     * 
+     * The value of the attribute is mapped to the column which has
+     * the name 'url'.
+     * 
+     * @param $url string The new value of the attribute.
+     **/
+    public function setUrl($url) {
+        $this->url = $url;
     }
     /**
      * Maps a record which is taken from the table system_exceptions to an instance of the class.
@@ -300,7 +356,9 @@ class SystemException implements JsonI {
      * <li>id</li>
      * <li>line</li>
      * <li>message</li>
+     * <li>parameters</li>
      * <li>trace</li>
+     * <li>url</li>
      * </ul>
      * 
      * @return Json An object of type 'Json'.
@@ -315,7 +373,9 @@ class SystemException implements JsonI {
             'id' => $this->getId(),
             'line' => $this->getLine(),
             'message' => $this->getMessage(),
-            'trace' => $this->getTrace()
+            'parameters' => $this->getParameters(),
+            'trace' => $this->getTrace(),
+            'url' => $this->getUrl()
         ]);
         return $json;
     }
