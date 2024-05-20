@@ -50,6 +50,21 @@ class ExceptionsDB extends DB {
         ])->execute();
     }
     /**
+     * Checks if there was an exception which was logged with same hash.
+     * 
+     * @param string $hash
+     * 
+     * @return bool If there is a single one with such hash, true is returned.
+     * False otherwise.
+     */
+    public function hasExceptionWithHash(string $hash) : bool {
+        return $this->table('system_exceptions')
+                ->select()
+                ->where('hash', $hash)
+                ->execute()
+                ->getRowsCount() != 0;
+    }
+    /**
      * Deletes a record from the table 'system_exceptions'.
      *
      * @param SystemException $entity An object that holds record information.

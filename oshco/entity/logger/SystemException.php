@@ -127,7 +127,13 @@ class SystemException implements JsonI {
         return $this->exceptionClass;
     }
     public function computeHash() {
-        return hash('sha256', $this->getClass().$this->getCode().$this->getExceptionClass().$this->getLine().$this->getMessage().$this->getTrace());
+        return hash('sha256', $this->getClass()
+                .$this->getCode()
+                .$this->getExceptionClass()
+                .$this->getLine()
+                .$this->getMessage()
+                .$this->getTrace()
+                .$this->getUrl());
     }
     /**
      * Returns the value of the attribute 'hash'.

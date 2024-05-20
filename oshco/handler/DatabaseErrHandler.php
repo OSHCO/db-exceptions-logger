@@ -3,6 +3,7 @@
 use oshco\database\logger\ExceptionsDB;
 use oshco\entity\logger\SystemException;
 use webfiori\error\AbstractHandler;
+use webfiori\http\Request;
 
 /**
  * Errors handler which is used to log errors to a database.
@@ -21,9 +22,17 @@ class DatabaseErrHandler extends AbstractHandler {
         $ex->setMessage($this->getMessage());
         $trace = '';
         foreach ($this->getTrace() as $entry) {
-            $trace .= $entry . "\n";
+            $trace .= $entry . "\r\n";
         }
         $ex->setTrace($trace);
+        $params = '';
+        foreach (Request::getParams() as $key => $val) {
+            $params .= $key . ' => "'.$val."\"\r\n";
+        }
+        if (strlen($params) != 0) {
+            $ex->setParameters($params);
+        }
+        $ex->setUrl(Request::getRequestedURI());
         ExceptionsDB::get()->addSystemException($ex);
     }
 
