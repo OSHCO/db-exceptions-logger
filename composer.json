@@ -1,0 +1,18 @@
+{
+    "name": "oshco/db-exceptions-logger",
+    "description": "A component which is used to log exceptions to database.",
+    "authors": [
+
+    ],
+    "require": {
+        "php": ">=8.0",
+        "webfiori/framework":"^v3.0.0-Beta.7"
+    },
+    "keywords": [
+        "framework",
+        "webfiori",
+        "database",
+        "logger"
+    ],
+    "license": "MIT"
+}
