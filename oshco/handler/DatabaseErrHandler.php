@@ -1,4 +1,5 @@
 <?php
+namespace oshco\handler;
 
 use oshco\database\logger\ExceptionsDB;
 use oshco\entity\logger\SystemException;
