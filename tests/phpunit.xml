@@ -15,7 +15,7 @@
         <!-- TODO: Specify test suits. Each folder should have one suite.-->
         
         <testsuite name="General Tests">
-            <directory>./sample</directory>
+            <directory>./oshco/test/logger</directory>
         </testsuite>
         
     </testsuites>
