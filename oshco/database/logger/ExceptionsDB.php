@@ -26,10 +26,10 @@ class ExceptionsDB extends DB {
     /**
      * Creates new instance of the class.
      */
-    public function __construct() {
+    public function __construct(string $conn = 'exceptions-logger') {
         //TODO: Specify the name of database connection to use in performing operations.
-        parent::__construct('');
-        $this->register('oshco\\database\\logger');
+        parent::__construct($conn);
+        $this->addTable(new SystemExceptionsTable());
     }
     /**
      * Adds new record to the table 'system_exceptions'.
