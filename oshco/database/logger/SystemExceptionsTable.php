@@ -1,9 +1,9 @@
 <?php
 namespace oshco\database\logger;
 
-use webfiori\database\mssql\MSSQLTable;
 use webfiori\database\ColOption;
 use webfiori\database\DataType;
+use webfiori\database\mssql\MSSQLTable;
 /**
  * A class which represents the database table 'system_exceptions'.
  * The table which is associated with this class will have the following columns:
@@ -65,6 +65,18 @@ class SystemExceptionsTable extends MSSQLTable {
             'line' => [
                 ColOption::TYPE => DataType::INT,
                 ColOption::COMMENT => 'Line number at which the exception was thrown at.',
+            ],
+            'url' => [
+                ColOption::TYPE => DataType::NVARCHAR,
+                ColOption::SIZE => '256',
+                ColOption::COMMENT => 'Requested URL that caused the exception.',
+                ColOption::NULL => true,
+            ],
+            'parameters' => [
+                ColOption::TYPE => DataType::NVARCHAR,
+                ColOption::SIZE => '1024',
+                ColOption::COMMENT => 'Request Parameters (if any)',
+                ColOption::NULL => true,
             ],
             'trace' => [
                 ColOption::TYPE => DataType::NVARCHAR,

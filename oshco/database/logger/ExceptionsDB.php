@@ -44,6 +44,8 @@ class ExceptionsDB extends DB {
             'exception-class' => $entity->getExceptionClass(),
             'message' => $entity->getMessage(),
             'line' => $entity->getLine(),
+            'url' => $entity->getUrl(),
+            'parameters' => $entity->getParameters(),
             'trace' => $entity->getTrace(),
         ])->execute();
     }
@@ -124,6 +126,8 @@ class ExceptionsDB extends DB {
                 'exception-class' => $entity->getExceptionClass(),
                 'message' => $entity->getMessage(),
                 'line' => $entity->getLine(),
+                'url' => $entity->getUrl(),
+                'parameters' => $entity->getParameters(),
                 'trace' => $entity->getTrace(),
             ])
             ->where('id', $entity->getId())
