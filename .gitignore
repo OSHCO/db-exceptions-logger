@@ -7,3 +7,4 @@ app/sto
 tests/.phpunit.result.cache
 */config/*
 !/oshco/config/app-config-testing.json
+oshco/ini/*
