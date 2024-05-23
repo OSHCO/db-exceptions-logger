@@ -9,6 +9,10 @@ use webfiori\framework\DB;
 class ExceptionsDB extends DB {
     private static $instance;
     /**
+     * The name of the table which is used to hold the exceptions.
+     */
+    const TABLE = 'system_exceptions';
+    /**
      * Returns an instance of the class.
      * 
      * Calling this method multiple times will return same instance.
@@ -37,7 +41,7 @@ class ExceptionsDB extends DB {
      * @param SystemException $entity An object that holds record information.
      */
     public function addSystemException(SystemException $entity) {
-        $this->table('system_exceptions')->insert([
+        $this->table(self::TABLE)->insert([
             'hash' => $entity->getHash(),
             'code' => $entity->getCode(),
             'class' => $entity->getClass(),
@@ -58,22 +62,22 @@ class ExceptionsDB extends DB {
      * False otherwise.
      */
     public function hasExceptionWithHash(string $hash) : bool {
-        return $this->table('system_exceptions')
+        return $this->table(self::TABLE)
                 ->select()
                 ->where('hash', $hash)
                 ->execute()
                 ->getRowsCount() != 0;
     }
     /**
-     * Deletes a record from the table 'system_exceptions'.
-     *
-     * @param SystemException $entity An object that holds record information.
+     * Returns the last added exception information as object.
+     * 
+     * @return SystemException|null If the database is empty, null is returned.
+     * Other than that, an object of type 'SystemException' is returned.
      */
-    public function deleteSystemException(SystemException $entity) {
-        $this->table('system_exceptions')
-                ->delete()
-                ->where('id', $entity->getId())
-                ->execute();
+    public function getLastAddedSystemException() {
+        $id = $this->table(self::TABLE)->selectMax('id')->execute()->getRows()[0]['max'];
+        
+        return $id === null ? null : $this->getSystemException($id);
     }
     /**
      * Returns the information of a record from the table 'system_exceptions'.
@@ -83,7 +87,7 @@ class ExceptionsDB extends DB {
      * Other than that, null is returned.
      */
     public function getSystemException(int $id) {
-        $mappedRecords = $this->table('system_exceptions')
+        $mappedRecords = $this->table(self::TABLE)
                 ->select()
                 ->where('id', $id)
                 ->execute()
@@ -104,13 +108,13 @@ class ExceptionsDB extends DB {
      * @return array An array that holds all table records as objects
      */
     public function getSystemExceptions(int $pageNum = 0, int $pageSize = 10) : array {
-        return $this->table('system_exceptions')
+        return $this->table(self::TABLE)
                 ->select()
                 ->page($pageNum, $pageSize)
                 ->orderBy(["id"])
                 ->execute()
                 ->map(function (array $record) {
-                    return C::map($record);
+                    return SystemException::map($record);
                 })->toArray();
     }
     /**
@@ -121,31 +125,9 @@ class ExceptionsDB extends DB {
      * @return int Number of records on the table 'system_exceptions'.
      */
     public function getSystemExceptionsCount() : int {
-        return $this->table('system_exceptions')
+        return $this->table(self::TABLE)
                 ->selectCount()
                 ->execute()
                 ->getRows()[0]['count'];
-    }
-    /**
-     * Updates a record on the table 'system_exceptions'.
-     *
-     * @param SystemException $entity An object that holds updated record information.
-     */
-    public function updateSystemException(SystemException $entity) {
-        $this->table('system_exceptions')
-            ->update([
-                'hash' => $entity->getHash(),
-                'date' => $entity->getDate(),
-                'code' => $entity->getCode(),
-                'class' => $entity->getClass(),
-                'exception-class' => $entity->getExceptionClass(),
-                'message' => $entity->getMessage(),
-                'line' => $entity->getLine(),
-                'url' => $entity->getUrl(),
-                'parameters' => $entity->getParameters(),
-                'trace' => $entity->getTrace(),
-            ])
-            ->where('id', $entity->getId())
-            ->execute();
     }
 }
