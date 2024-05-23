@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="bootstrap.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+    <coverage includeUncoveredFiles="true">
+        <include>
+            <file>../oshco/entity/logger/SystemException.php</file>
+            <file>../oshco/database/logger/ExceptionsDB.php</file>
+            <file>../oshco/database/logger/SystemExceptionsTable.php</file>
+        </include>
+        <report>
+            <clover outputFile="clover.xml"/>
+        </report>
+    </coverage>
     <php>
     </php>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <!-- TODO: Specify files to be covered by tests-->
-            <!--<file>./webfiori/framework/Access.php</file>-->
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="clover.xml"/>
-    </logging>
     <testsuites>
         <!-- TODO: Specify test suits. Each folder should have one suite.-->
-        
         <testsuite name="General Tests">
-            <directory>./oshco/test/logger</directory>
+          <directory>./oshco/test/logger</directory>
         </testsuite>
-        
     </testsuites>
 </phpunit>
