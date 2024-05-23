@@ -22,5 +22,5 @@ Replace `your-connection` with the database connection to be used by the class. 
 To set errors handler, place following code in any of the initialization files:
 
 ``` php
-\webfiori\error\Handler::registerHandler(new \oshco\handler\DatabaseErrHandler());
+\webfiori\error\Handler::registerHandler(new \oshco\handler\DatabaseErrHandler(new oshco\database\logger\ExceptionsDB()));
 ```

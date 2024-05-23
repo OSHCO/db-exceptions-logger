@@ -2,11 +2,12 @@
 namespace oshco\database\logger;
 
 use oshco\entity\logger\SystemException;
+use oshco\handler\HandlerController;
 use webfiori\framework\DB;
 /**
  * A class which is used to perform operations on the table 'system_exceptions'
  */
-class ExceptionsDB extends DB {
+class ExceptionsDB extends DB implements HandlerController {
     private static $instance;
     /**
      * The name of the table which is used to hold the exceptions.
