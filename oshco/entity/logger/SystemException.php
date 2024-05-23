@@ -126,7 +126,22 @@ class SystemException implements JsonI {
     public function getExceptionClass() {
         return $this->exceptionClass;
     }
-    public function computeHash() {
+    /**
+     * Compute SHA256 hash of the exception and return it.
+     * The hash will be based on the following:
+     * <ul>
+     * <li>Exception code</li>
+     * <li>Exception class</li>
+     * <li>The class at which the exception was thrown at</li>
+     * <li>Line</li>
+     * <li>Message</li>
+     * <li>Trace</li>
+     * <li>Requested URL</li>
+     * <li></li>
+     * </ul>
+     * @return string
+     */
+    public function computeHash() : string {
         return hash('sha256', $this->getClass()
                 .$this->getCode()
                 .$this->getExceptionClass()
