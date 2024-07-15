@@ -1,7 +1,7 @@
 <?php
 
 //Bootstrap file which is used to boot testing process.
-use webfiori\framework\AutoLoader;
+use webfiori\framework\autoload\ClassLoader;
 use webfiori\framework\App;
 
 $DS = DIRECTORY_SEPARATOR;
@@ -31,7 +31,7 @@ $WebFioriFrameworkDirs = [
 fprintf(STDOUT, "Bootstrap Path: '".__DIR__."'\n");
 fprintf(STDOUT,'Roor Path: \''.$Root.'\''."\n");
 fprintf(STDOUT,'Include Path: \''.get_include_path().'\''."\n");
-fprintf(STDOUT,"Tryning to load the class 'AutoLoader'...\n");
+fprintf(STDOUT,"Tryning to load the class 'ClassLoader'...\n");
 $isAutoloaderLoaded = false;
 
 
@@ -40,7 +40,7 @@ if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
 
     foreach ($WebFioriFrameworkDirs as $dir) {
         //linux 
-        $file = $DS.$dir.$DS.'framework'.$DS.'AutoLoader.php';
+        $file = $DS.$dir.$DS.'framework'.$DS.'autoload'.$DS.'ClassLoader.php';
         fprintf(STDOUT,"Checking if file '$file' is exist...\n");
 
         if (file_exists($file)) {
@@ -54,7 +54,7 @@ if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
 
     foreach ($WebFioriFrameworkDirs as $dir) {
         //other
-        $file = $dir.$DS.'framework'.$DS.'AutoLoader.php';
+        $file = $dir.$DS.'framework'.$DS.'autoload'.$DS.'ClassLoader.php';
         fprintf(STDOUT,"Checking if file '$file' is exist...\n");
 
         if (file_exists($file)) {
@@ -66,13 +66,13 @@ if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
 }
 
 if ($isAutoloaderLoaded === false) {
-    fprintf(STDERR, "Error: Unable to find the class 'AutoLoader'.\n");
+    fprintf(STDERR, "Error: Unable to find the class 'ClassLoader'.\n");
     exit(-1);
 } else {
-    fprintf(STDOUT,"Class 'AutoLoader' successfully loaded.\n");
+    fprintf(STDOUT,"Class 'ClassLoader' successfully loaded.\n");
 }
 fprintf(STDOUT,"Initializing autoload directories...\n");
-AutoLoader::get([
+ClassLoader::get([
     'search-folders' => [
         'tests',
         'webfiori',
@@ -86,7 +86,7 @@ AutoLoader::get([
 fprintf(STDOUT,'Autoloader Initialized.'."\n");
 
 fprintf(STDOUT,"Initializing application...\n");
-define('APP_PATH', AutoLoader::get()->root().$DS.APP_DIR.$DS);
+define('APP_PATH', ClassLoader::get()->root().$DS.APP_DIR.$DS);
 fprintf(STDOUT,'App Path: '.APP_PATH."\n");
 $driver = "\\webfiori\\framework\\config\\JsonDriver";
 fprintf(STDOUT,"Setting application configuration driver to '$driver'\n");
@@ -97,8 +97,8 @@ App::getConfig()->setConfigFileName($configFileName);
 App::getConfig()->initialize();
 App::start();
 fprintf(STDOUT,'Done.'."\n");
-fprintf(STDOUT,'Root Directory: \''.AutoLoader::get()->root().'\'.'."\n");
-define('TESTS_PATH', AutoLoader::get()->root().$DS.'tests');
+fprintf(STDOUT,'Root Directory: \''.ClassLoader::get()->root().'\'.'."\n");
+define('TESTS_PATH', ClassLoader::get()->root().$DS.'tests');
 fprintf(STDOUT,'Stored Connections:'."\n");
 if (count(App::getConfig()->getDBConnections()) != 0) {
     foreach (App::getConfig()->getDBConnections() as $conn) {
