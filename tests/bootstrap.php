@@ -99,7 +99,9 @@ App::getConfig()->setConfigFileName($configFileName);
 App::getConfig()->initialize();
 App::start();
 // Add test database connection
-$connInfo = new ConnectionInfo('mssql', 'sa', '1234567890@Eu', 'testing', 'localhost', 1433);
+$connInfo = new ConnectionInfo('mssql', 'sa', '1234567890@Eu', 'testing', 'localhost', 1433, [
+    'TrustServerCertificate' => 'Yes'
+]);
 $connInfo->setName('exceptions-logger');
 App::getConfig()->addOrUpdateDBConnection($connInfo);
 fprintf(STDOUT,'Done.'."\n");
