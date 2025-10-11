@@ -9,3 +9,5 @@ tests/.phpunit.result.cache
 !/oshco/config/app-config-testing.json
 oshco/ini/*
 *.cache
+*.Identifier
+tests/clover.xml
