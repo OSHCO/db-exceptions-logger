@@ -3,7 +3,8 @@ namespace oshco\database\logger;
 
 use oshco\entity\logger\SystemException;
 use oshco\handler\HandlerController;
-use webfiori\framework\DB;
+use WebFiori\Framework\DB;
+use oshco\database\logger\SystemExceptionsTable;
 /**
  * A class which is used to perform operations on the table 'system_exceptions'
  */

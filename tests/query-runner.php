@@ -1,7 +1,7 @@
 <?php
 
 
-use webfiori\framework\App;
+use WebFiori\Framework\App;
 /**
  * Run a command to execute certain SQL query on specific database.
  * 

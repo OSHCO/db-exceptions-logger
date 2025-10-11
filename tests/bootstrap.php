@@ -1,8 +1,9 @@
 <?php
 
 //Bootstrap file which is used to boot testing process.
-use webfiori\framework\autoload\ClassLoader;
-use webfiori\framework\App;
+use WebFiori\Framework\Autoload\ClassLoader;
+use WebFiori\Framework\App;
+use WebFiori\Database\ConnectionInfo;
 
 $DS = DIRECTORY_SEPARATOR;
 
@@ -24,7 +25,7 @@ $Root = substr(__DIR__, 0, strlen(__DIR__) - strlen('tests'));
 //Add and remove directories as needed.
 $WebFioriFrameworkDirs = [
     $Root.$DS.'webfiori',
-    $Root.$DS.'vendor'.$DS.'webfiori'.$DS.'framework'.$DS.'webfiori'
+    $Root.$DS.'vendor'.$DS.'webfiori'.$DS.'framework'.$DS.'WebFiori'
 ];
 
 //Printing informative messages in the terminal
@@ -40,7 +41,7 @@ if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
 
     foreach ($WebFioriFrameworkDirs as $dir) {
         //linux 
-        $file = $DS.$dir.$DS.'framework'.$DS.'autoload'.$DS.'ClassLoader.php';
+        $file = $DS.$dir.$DS.'Framework'.$DS.'Autoload'.$DS.'ClassLoader.php';
         fprintf(STDOUT,"Checking if file '$file' is exist...\n");
 
         if (file_exists($file)) {
@@ -54,7 +55,7 @@ if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
 
     foreach ($WebFioriFrameworkDirs as $dir) {
         //other
-        $file = $dir.$DS.'framework'.$DS.'autoload'.$DS.'ClassLoader.php';
+        $file = $dir.$DS.'Framework'.$DS.'Autoload'.$DS.'ClassLoader.php';
         fprintf(STDOUT,"Checking if file '$file' is exist...\n");
 
         if (file_exists($file)) {
@@ -88,14 +89,19 @@ fprintf(STDOUT,'Autoloader Initialized.'."\n");
 fprintf(STDOUT,"Initializing application...\n");
 define('APP_PATH', ClassLoader::get()->root().$DS.APP_DIR.$DS);
 fprintf(STDOUT,'App Path: '.APP_PATH."\n");
-$driver = "\\webfiori\\framework\\config\\JsonDriver";
+$driver = "\\WebFiori\\Framework\\Config\\JsonDriver";
 fprintf(STDOUT,"Setting application configuration driver to '$driver'\n");
+App::initiate('oshco', 'public', ClassLoader::get()->root());
 App::setConfigDriver($driver);
 $configFileName = 'app-config-testing.json';
 fprintf(STDOUT,"Setting application configuration file to '$configFileName'\n");
 App::getConfig()->setConfigFileName($configFileName);
 App::getConfig()->initialize();
 App::start();
+// Add test database connection
+$connInfo = new ConnectionInfo('mssql', 'sa', '1234567890@Eu', 'testing', 'localhost', 1433);
+$connInfo->setName('exceptions-logger');
+App::getConfig()->addOrUpdateDBConnection($connInfo);
 fprintf(STDOUT,'Done.'."\n");
 fprintf(STDOUT,'Root Directory: \''.ClassLoader::get()->root().'\'.'."\n");
 define('TESTS_PATH', ClassLoader::get()->root().$DS.'tests');

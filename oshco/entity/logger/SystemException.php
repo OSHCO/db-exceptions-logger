@@ -1,9 +1,9 @@
 <?php
 namespace oshco\entity\logger;
 
-use webfiori\database\RecordMapper;
-use webfiori\json\Json;
-use webfiori\json\JsonI;
+use WebFiori\Database\RecordMapper;
+use WebFiori\Json\Json;
+use WebFiori\Json\JsonI;
 
 /**
  * An auto-generated entity class which maps to a record in the

@@ -3,8 +3,8 @@ namespace oshco\handler;
 
 use oshco\entity\logger\SystemException;
 use Override;
-use webfiori\error\AbstractHandler;
-use webfiori\http\Request;
+use WebFiori\Error\AbstractHandler;
+use WebFiori\Http\Request;
 
 /**
  * Errors handler which is used to log errors to a database.

@@ -1,9 +1,9 @@
 <?php
 namespace oshco\database\logger;
 
-use webfiori\database\ColOption;
-use webfiori\database\DataType;
-use webfiori\database\mssql\MSSQLTable;
+use WebFiori\Database\ColOption;
+use WebFiori\Database\DataType;
+use WebFiori\Database\MsSql\MSSQLTable;
 /**
  * A class which represents the database table 'system_exceptions'.
  * The table which is associated with this class will have the following columns:

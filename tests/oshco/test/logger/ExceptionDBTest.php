@@ -4,8 +4,8 @@ namespace oshco\test\logger;
 use oshco\database\logger\ExceptionsDB;
 use oshco\entity\logger\SystemException;
 use PHPUnit\Framework\TestCase;
-use webfiori\error\TraceEntry;
-use webfiori\http\Request;
+use WebFiori\Error\TraceEntry;
+use WebFiori\Http\Request;
 /**
  * Description of ExceptionDBTest
  *
