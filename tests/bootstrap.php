@@ -1,131 +1,77 @@
 <?php
 
-//Bootstrap file which is used to boot testing process.
-use WebFiori\Framework\Autoload\ClassLoader;
+$root = dirname(__DIR__);
+fwrite(STDOUT, "Root: ".$root."\n");
+require $root.'/vendor/autoload.php';
+
 use WebFiori\Framework\App;
-use WebFiori\Database\ConnectionInfo;
 
-$DS = DIRECTORY_SEPARATOR;
+fwrite(STDOUT, "Initializing App...\n");
+try {
+    App::initiate('oshco', 'public', $root.'/public');
+    App::start();
+} catch (Throwable $e) {
+    fwrite(STDOUT, "Error During Initialization: ".$e->getMessage()."\n");
+    exit(1);
+}
+fwrite(STDOUT, "Done\n");
+fwrite(STDOUT, "----------------------------------------------\n");
 
-//TODO: Set the name of JSON configuration file to use inrunning test cases.
-define('JSON_CONFIG','app-config-testing.json');
+fwrite(STDOUT, "Adding Database Connection...\n");
+$exitCode = App::getRunner()->setArgsVector([
+    'webfiori',
+    'add:db-connection',
+    '--db-type' => 'mssql',
+    '--host' => getenv('DB_HOST') ?: 'localhost',
+    '--port' => getenv('DB_PORT') ?: '1433',
+    '--user' => getenv('DB_USER') ?: 'sa',
+    '--password' => getenv('SA_SQL_SERVER_PASSWORD') ?: 'StrongPass@2024',
+    '--database' => getenv('DB_NAME') ?: 'testing',
+    '--name' => 'exceptions-logger',
+    '--extras' => '{"TrustServerCertificate":true,"Encrypt":false}',
+    '--no-check'
+])->start();
 
+if ($exitCode != 0) {
+    fwrite(STDOUT, "Error adding database connection. Tests will not execute.\n");
+    fwrite(STDOUT, "----------------------------------------------\n");
+    exit($exitCode);
+}
+fwrite(STDOUT, "Done\n");
+fwrite(STDOUT, "----------------------------------------------\n");
 
-//TODO: Set application directory name. Update as needed.
-define('APP_DIR', 'oshco');
+fwrite(STDOUT, "Initializing Migrations Table...\n");
+$exitCode = App::getRunner()->setArgsVector([
+    'webfiori',
+    'migrations:ini',
+    '--connection' => 'exceptions-logger',
+])->start();
 
-//This constant is used to indicate that application is in testing env.
-//Leave as is
-define('UNIT_TESTING', true);
+if ($exitCode != 0) {
+    fwrite(STDOUT, "Error initializing migrations table.\n");
+    fwrite(STDOUT, "----------------------------------------------\n");
+    exit($exitCode);
+}
+fwrite(STDOUT, "Done\n");
+fwrite(STDOUT, "----------------------------------------------\n");
 
-$Root = substr(__DIR__, 0, strlen(__DIR__) - strlen('tests'));
+fwrite(STDOUT, "Applying Migrations...\n");
+$exitCode = App::getRunner()->setArgsVector([
+    'webfiori',
+    'migrations:run',
+    '--connection' => 'exceptions-logger',
+    '--env' => 'dev'
+])->start();
 
-//an array that contains possible locations at which 
-//WebFiori Framework might exist.
-//Add and remove directories as needed.
-$WebFioriFrameworkDirs = [
-    $Root.$DS.'webfiori',
-    $Root.$DS.'vendor'.$DS.'webfiori'.$DS.'framework'.$DS.'WebFiori'
-];
-
-//Printing informative messages in the terminal
-fprintf(STDOUT, "Bootstrap Path: '".__DIR__."'\n");
-fprintf(STDOUT,'Roor Path: \''.$Root.'\''."\n");
-fprintf(STDOUT,'Include Path: \''.get_include_path().'\''."\n");
-fprintf(STDOUT,"Tryning to load the class 'ClassLoader'...\n");
-$isAutoloaderLoaded = false;
-
-
-if (explode($DS, __DIR__)[0] == 'home' || explode($DS, __DIR__)[1] == 'home') {
-    fprintf(STDOUT,"Run Environment: Linux.\n");
-
-    foreach ($WebFioriFrameworkDirs as $dir) {
-        //linux 
-        $file = $DS.$dir.$DS.'Framework'.$DS.'Autoload'.$DS.'ClassLoader.php';
-        fprintf(STDOUT,"Checking if file '$file' is exist...\n");
-
-        if (file_exists($file)) {
-            require_once $file;
-            $isAutoloaderLoaded = true;
-            break;
-        }
-    }
-} else {
-    fprintf(STDOUT,"Run Environment: Other.\n");
-
-    foreach ($WebFioriFrameworkDirs as $dir) {
-        //other
-        $file = $dir.$DS.'Framework'.$DS.'Autoload'.$DS.'ClassLoader.php';
-        fprintf(STDOUT,"Checking if file '$file' is exist...\n");
-
-        if (file_exists($file)) {
-            require_once $file;
-            $isAutoloaderLoaded = true;
-            break;
-        }
-    }
+if ($exitCode != 0) {
+    fwrite(STDOUT, "Error applying migrations. Tests will not execute.\n");
+    fwrite(STDOUT, "----------------------------------------------\n");
+    exit($exitCode);
 }
 
-if ($isAutoloaderLoaded === false) {
-    fprintf(STDERR, "Error: Unable to find the class 'ClassLoader'.\n");
-    exit(-1);
-} else {
-    fprintf(STDOUT,"Class 'ClassLoader' successfully loaded.\n");
-}
-fprintf(STDOUT,"Initializing autoload directories...\n");
-ClassLoader::get([
-    'search-folders' => [
-        'tests',
-        'webfiori',
-        'vendor',
-        APP_DIR,
-    ],
-    'define-root' => true,
-    'root' => $Root,
-    'on-load-failure' => 'do-nothing'
-]);
-fprintf(STDOUT,'Autoloader Initialized.'."\n");
-
-fprintf(STDOUT,"Initializing application...\n");
-define('APP_PATH', ClassLoader::get()->root().$DS.APP_DIR.$DS);
-fprintf(STDOUT,'App Path: '.APP_PATH."\n");
-$driver = "\\WebFiori\\Framework\\Config\\JsonDriver";
-fprintf(STDOUT,"Setting application configuration driver to '$driver'\n");
-App::initiate('oshco', 'public', ClassLoader::get()->root());
-App::setConfigDriver($driver);
-$configFileName = 'app-config-testing.json';
-fprintf(STDOUT,"Setting application configuration file to '$configFileName'\n");
-App::getConfig()->setConfigFileName($configFileName);
-App::getConfig()->initialize();
-App::start();
-// Add test database connection
-$connInfo = new ConnectionInfo('mssql', 'sa', getenv('SA_SQL_SERVER_PASSWORD') ?: '1234567890@Eu', 'testing', 'localhost', 1433, [
-    'TrustServerCertificate' => 'Yes'
-]);
-$connInfo->setName('exceptions-logger');
-App::getConfig()->addOrUpdateDBConnection($connInfo);
-fprintf(STDOUT,'Done.'."\n");
-fprintf(STDOUT,'Root Directory: \''.ClassLoader::get()->root().'\'.'."\n");
-define('TESTS_PATH', ClassLoader::get()->root().$DS.'tests');
-fprintf(STDOUT,'Stored Connections:'."\n");
-if (count(App::getConfig()->getDBConnections()) != 0) {
-    foreach (App::getConfig()->getDBConnections() as $conn) {
-        fprintf(STDOUT, $conn->getName()."\n");
-    }
-} else {
-    fprintf(STDOUT, "<<NO DATABSE CONNECTIONS>>\n");
-}
-fprintf(STDOUT, "Registering shutdown function...\n");
-register_shutdown_function(function()
-{
-   //TODO: Run extra code after tests completion.   
-    fprintf(STDOUT, "Testing Finished.\n");
+register_shutdown_function(function () {
+    fwrite(STDOUT, "Testing Finished.\n");
 });
-fprintf(STDOUT, "Registering shutdown function completed.\n");
-require_once 'query-runner.php';
-runInitializationQuery('test', \oshco\database\logger\ExceptionsDB::class);
-//TODO: Include your own custom bootstrap scripts here.
-//require_once 'my-script.php';
-
-fprintf(STDOUT, "Done\n");
-fprintf(STDOUT,"Starting to run tests...\n");
+fwrite(STDOUT, "----------------------------------------------\n");
+fwrite(STDOUT, "Bootstrapping Done\n");
+fwrite(STDOUT, "----------------------------------------------\n");

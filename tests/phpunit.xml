@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-    <coverage includeUncoveredFiles="true">
-        <include>
-            <file>../oshco/entity/logger/SystemException.php</file>
-            <file>../oshco/database/logger/ExceptionsDB.php</file>
-            <file>../oshco/database/logger/SystemExceptionsTable.php</file>
-        </include>
-        <report>
-            <clover outputFile="clover.xml"/>
-        </report>
-    </coverage>
-    <php>
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="bootstrap.php"
+         colors="true">
     <testsuites>
-        <!-- TODO: Specify test suits. Each folder should have one suite.-->
-        <testsuite name="General Tests">
-          <directory>./oshco/test/logger</directory>
+        <testsuite name="Logger Tests">
+            <directory>./oshco/test/logger</directory>
         </testsuite>
     </testsuites>
 </phpunit>
