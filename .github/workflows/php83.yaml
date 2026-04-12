@@ -82,3 +82,18 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  release:
+    name: Release
+    needs: sonar
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create Release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: php
+          target-branch: main
