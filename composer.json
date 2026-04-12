@@ -6,7 +6,7 @@
     ],
     "require": {
         "php": ">=8.0",
-        "webfiori/framework":"v3.0.0-Beta.29"
+        "webfiori/framework":"3.0.0-RC0"
     },
     "keywords": [
         "framework",

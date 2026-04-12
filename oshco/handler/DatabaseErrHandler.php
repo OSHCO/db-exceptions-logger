@@ -4,7 +4,7 @@ namespace oshco\handler;
 use oshco\entity\logger\SystemException;
 use Override;
 use WebFiori\Error\AbstractHandler;
-use WebFiori\Http\Request;
+use WebFiori\Framework\App;
 
 /**
  * Errors handler which is used to log errors to a database.
@@ -16,13 +16,13 @@ class DatabaseErrHandler extends AbstractHandler {
      * @var HandlerController
      */
     private $db;
-    #[Override]
+
     public function __construct(HandlerController $controller) {
         parent::__construct();
         $this->db = $controller;
     }
     #[Override]
-    public function handle() {
+    public function handle(): void {
         $ex = new SystemException();
         $ex->setCode($this->getCode());
         $ex->setClass($this->getClass());
@@ -35,13 +35,13 @@ class DatabaseErrHandler extends AbstractHandler {
         }
         $ex->setTrace($trace);
         $params = '';
-        foreach (Request::getParams() as $key => $val) {
+        foreach (App::getRequest()->getParams() as $key => $val) {
             $params .= $key . ' => "'.$val."\"\r\n";
         }
         if (strlen($params) != 0) {
             $ex->setParameters($params);
         }
-        $ex->setUrl(Request::getRequestedURI());
+        $ex->setUrl(App::getRequest()->getRequestedURI());
         $this->db->addSystemException($ex);
     }
 
