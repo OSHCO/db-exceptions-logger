@@ -68,12 +68,16 @@ jobs:
       - name: Run Tests
         run: composer test
 
-  code-coverage:
-    name: Coverage
-    needs: test
-    uses: WebFiori/workflows/.github/workflows/coverage-codecov.yaml@main
-    with:
-      php-version: '8.2'
-      coverage-file: 'php-8.2-coverage.xml'
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  sonar:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
