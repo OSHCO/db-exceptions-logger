@@ -56,8 +56,8 @@ class ExceptionDBTest extends TestCase {
         $this->assertEquals(77, $ex1->getLine());
         $this->assertEquals('This is a test', $ex1->getMessage());
         $this->assertEquals(null, $ex1->getParameters());
-        $this->assertEquals("At class webfiori\\error\TraceEntry line 33\n"
-                . "At class webfiori\\error\TraceEntry line 33", $ex1->getTrace());
+        $this->assertEquals("At class WebFiori\\Error\TraceEntry line 33\n"
+                . "At class WebFiori\\Error\TraceEntry line 33", $ex1->getTrace());
         $this->assertEquals('https://my-api.com/do-it', $ex1->getUrl());
         $this->assertNull(ExceptionsDB::get()->getSystemException(100));
         $ex1 = ExceptionsDB::get()->getSystemException($ex1->getId());
@@ -70,20 +70,20 @@ class ExceptionDBTest extends TestCase {
         $this->assertEquals(77, $ex1->getLine());
         $this->assertEquals('This is a test', $ex1->getMessage());
         $this->assertEquals(null, $ex1->getParameters());
-        $this->assertEquals("At class webfiori\\error\TraceEntry line 33\n"
-                . "At class webfiori\\error\TraceEntry line 33", $ex1->getTrace());
+        $this->assertEquals("At class WebFiori\\Error\TraceEntry line 33\n"
+                . "At class WebFiori\\Error\TraceEntry line 33", $ex1->getTrace());
         $this->assertEquals('https://my-api.com/do-it', $ex1->getUrl());
         
         $this->assertEquals('{"class":"oshco\\\\entity\\\\logger\\\\SystemException",'
                 . '"code":33,'
                 . '"date":"'.$date.'",'
                 . '"exceptionClass":"oshco\\\\test\\\\logger\\\\ExceptionDBTest",'
-                . '"hash":"10fab27b0e869d5356d791f99e01b89e1950ffb6ced9fdd9b409bf879a86a790",'
+                . '"hash":"84a82e8dc66a34da3d471e9e43e6ac89363a204c45e97229be01e3c0f4710b75",'
                 . '"id":1,'
                 . '"line":77,'
                 . '"message":"This is a test",'
                 . '"parameters":null,'
-                . '"trace":"At class webfiori\\\\error\\\\TraceEntry line 33\nAt class webfiori\\\\error\\\\TraceEntry line 33",'
+                . '"trace":"At class WebFiori\\\\Error\\\\TraceEntry line 33\nAt class WebFiori\\\\Error\\\\TraceEntry line 33",'
                 . '"url":"https:\/\/my-api.com\/do-it"}', $ex1->toJSON().'');
     }
     /**

@@ -1,8 +1,8 @@
 <?php
 namespace oshco\entity\logger;
 
-use WebFiori\Database\RecordMapper;
 use WebFiori\Json\Json;
+use WebFiori\Database\Entity\RecordMapper;
 use WebFiori\Json\JsonI;
 
 /**
@@ -10,12 +10,10 @@ use WebFiori\Json\JsonI;
  * table 'system_exceptions'
  **/
 class SystemException implements JsonI {
-    /**
-     * A mapper which is used to map a record to an instance of the class.
-     * 
-     * @var RecordMapper
-     **/
     private static $RecordMapper;
+    /**
+     * 
+     **/
     /**
      * The attribute which is mapped to the column 'class'.
      * 
