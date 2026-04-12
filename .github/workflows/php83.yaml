@@ -70,6 +70,7 @@ jobs:
 
   sonar:
     name: Code Quality
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
