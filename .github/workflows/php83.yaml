@@ -8,9 +8,14 @@ on:
 
 jobs:
   test:
-    name: Run Tests
+    name: Tests - PHP ${{ matrix.php-version }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.2', '8.3', '8.4', '8.5']
 
     env:
       SA_SQL_SERVER_PASSWORD: ${{ secrets.SA_SQL_SERVER_PASSWORD }}
@@ -32,7 +37,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php-version }}
           extensions: mbstring, sqlsrv
           coverage: xdebug
           tools: composer
@@ -63,7 +68,7 @@ jobs:
             /opt/mssql-tools18/bin/sqlcmd -S localhost -U SA -P "$SA_SQL_SERVER_PASSWORD" -Q 'CREATE DATABASE testing' -C
 
       - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer update --no-interaction --prefer-dist
 
       - name: Run Tests
         run: composer test

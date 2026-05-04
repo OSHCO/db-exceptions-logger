@@ -1,12 +1,10 @@
 {
     "name": "oshco/db-exceptions-logger",
     "description": "A component which is used to log exceptions to database.",
-    "authors": [
-
-    ],
+    "authors": [],
     "require": {
         "php": ">=8.0",
-        "webfiori/framework":"~3.0.0-RC@RC"
+        "webfiori/framework": "~3.0.0-RC@RC"
     },
     "keywords": [
         "framework",
@@ -19,7 +17,7 @@
         "phpunit/phpunit": "^10",
         "friendsofphp/php-cs-fixer": "^3.86"
     },
-    "scripts":{
+    "scripts": {
         "test": "vendor/bin/phpunit -c tests/phpunit.xml",
         "test10": "vendor/bin/phpunit -c tests/phpunit10.xml",
         "fix-cs": "vendor/bin/php-cs-fixer fix --config=php_cs.php.dist"
