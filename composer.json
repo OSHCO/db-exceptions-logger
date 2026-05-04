@@ -3,8 +3,8 @@
     "description": "A component which is used to log exceptions to database.",
     "authors": [],
     "require": {
-        "php": ">=8.0",
-        "webfiori/framework": "~3.0.0-RC@RC"
+        "php": ">=8.1",
+        "webfiori/framework":"~3.0.0-RC@RC"
     },
     "keywords": [
         "framework",
