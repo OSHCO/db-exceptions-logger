@@ -5,7 +5,7 @@
          colors="true">
     <testsuites>
         <testsuite name="Logger Tests">
-            <directory>./oshco/test/logger</directory>
+            <directory>./Oshco</directory>
         </testsuite>
     </testsuites>
 </phpunit>

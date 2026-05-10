@@ -11,3 +11,6 @@ oshco/ini/*
 *.cache
 *.Identifier
 tests/clover.xml
+/Oshco/Ini
+/Oshco/Storage
+/Oshco/Config

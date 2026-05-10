@@ -8,7 +8,7 @@ use WebFiori\Framework\App;
 
 fwrite(STDOUT, "Initializing App...\n");
 try {
-    App::initiate('oshco', 'public', $root.'/public');
+    App::initiate('Oshco', 'public', $root.'/public');
     App::start();
 } catch (Throwable $e) {
     fwrite(STDOUT, "Error During Initialization: ".$e->getMessage()."\n");
