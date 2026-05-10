@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.1](https://github.com/OSHCO/db-exceptions-logger/compare/v1.3.0...v1.3.1) (2026-05-04)
+
+
+### Miscellaneous Chores
+
+* Updated Dependencies ([2344ac7](https://github.com/OSHCO/db-exceptions-logger/commit/2344ac730d8ec92db4752d42d9bdb86710d26a0c))
+* Updated Dependencies ([46224d0](https://github.com/OSHCO/db-exceptions-logger/commit/46224d015c717942a6beaecd9dcc379db4c5e14f))
+
 ## [1.3.0](https://github.com/OSHCO/db-exceptions-logger/compare/v1.2.0...v1.3.0) (2026-04-12)
 
 
