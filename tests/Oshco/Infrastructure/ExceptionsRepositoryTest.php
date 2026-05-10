@@ -4,6 +4,7 @@ namespace Tests\Oshco\Infrastructure;
 use Oshco\Entity\SystemException;
 use Oshco\Infrastructure\Repository\ExceptionsRepository;
 use PHPUnit\Framework\TestCase;
+use WebFiori\Database\Database;
 use WebFiori\Error\TraceEntry;
 use WebFiori\Framework\App;
 
@@ -12,7 +13,7 @@ class ExceptionsRepositoryTest extends TestCase {
 
     private static function getRepo(): ExceptionsRepository {
         if (self::$repo === null) {
-            $db = App::getDatabase('exceptions-logger');
+            $db = new Database(App::getConfig()->getDBConnection('exceptions-logger'));
             self::$repo = new ExceptionsRepository($db);
         }
 
