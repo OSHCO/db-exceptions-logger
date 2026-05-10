@@ -4,8 +4,8 @@ A [WebFiori](https://webfiori.com) framework extension that logs exceptions to a
 
 ## Requirements
 
-- PHP 8.0 or later
-- [WebFiori Framework](https://github.com/WebFiori/framework) v3.0.0-RC0
+- PHP 8.1 or later
+- [WebFiori Framework](https://github.com/WebFiori/framework) v3.0.0-RC
 - SQL Server with ODBC Driver 18
 
 ## Installation
@@ -25,18 +25,17 @@ php webfiori migrations:ini --connection=<your-connection>
 php webfiori migrations:run --connection=<your-connection>
 ```
 
-Replace `<your-connection>` with your database connection name. The library defaults to a connection named `exceptions-logger`.
-
 ### 2. Register the error handler
 
-In any of your application's initialization files:
-
 ```php
-use oshco\handler\DatabaseErrHandler;
-use oshco\database\logger\ExceptionsDB;
+use Oshco\ErrHandler\DatabaseErrHandler;
+use Oshco\Infrastructure\Repository\ExceptionsRepository;
 use WebFiori\Error\Handler;
+use WebFiori\Framework\App;
 
-Handler::registerHandler(new DatabaseErrHandler(new ExceptionsDB()));
+$db = App::getDatabase('your-connection');
+$repo = new ExceptionsRepository($db);
+Handler::registerHandler(new DatabaseErrHandler($repo));
 ```
 
 ## How It Works
@@ -48,17 +47,16 @@ When an exception occurs, `DatabaseErrHandler` captures:
 - Request URL and parameters
 - A SHA-256 hash of the exception for deduplication
 
-All data is stored in the `system_exceptions` table via `ExceptionsDB`.
+All data is stored in the `system_exceptions` table via `ExceptionsRepository`.
 
-## Classes and Interfaces
+## Classes
 
-| Class / Interface | Description |
+| Class | Description |
 |---|---|
-| [`HandlerController`](oshco/handler/HandlerController.php) | Interface for exception storage. Requires `addSystemException()`. |
-| [`DatabaseErrHandler`](oshco/handler/DatabaseErrHandler.php) | Error handler that captures exception details and delegates storage to a `HandlerController`. |
-| [`ExceptionsDB`](oshco/database/logger/ExceptionsDB.php) | Database layer implementing `HandlerController`. Provides CRUD operations on the `system_exceptions` table. |
-| [`SystemExceptionsTable`](oshco/database/logger/SystemExceptionsTable.php) | MSSQL table schema definition for `system_exceptions`. |
-| [`SystemException`](oshco/entity/logger/SystemException.php) | Entity representing a logged exception record. |
+| [`DatabaseErrHandler`](Oshco/ErrHandler/DatabaseErrHandler.php) | Error handler that captures exception details and delegates storage to `ExceptionsRepository`. |
+| [`ExceptionsRepository`](Oshco/Infrastructure/Repository/ExceptionsRepository.php) | Repository providing CRUD operations on the `system_exceptions` table. |
+| [`SystemExceptionsTable`](Oshco/Infrastructure/Schema/SystemExceptionsTable.php) | MSSQL table schema definition for `system_exceptions`. |
+| [`SystemException`](Oshco/Entity/SystemException.php) | Entity representing a logged exception record. |
 
 ## Running Tests
 

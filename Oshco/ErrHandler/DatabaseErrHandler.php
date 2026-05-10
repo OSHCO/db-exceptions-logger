@@ -1,26 +1,23 @@
 <?php
-namespace oshco\handler;
+namespace Oshco\ErrHandler;
 
-use oshco\entity\logger\SystemException;
+use Oshco\Entity\SystemException;
+use Oshco\Infrastructure\Repository\ExceptionsRepository;
 use Override;
 use WebFiori\Error\AbstractHandler;
 use WebFiori\Framework\App;
 
 /**
- * Errors handler which is used to log errors to a database.
- *
+ * Error handler that captures exception details and stores them via ExceptionsRepository.
  */
 class DatabaseErrHandler extends AbstractHandler {
-    /**
-     * 
-     * @var HandlerController
-     */
-    private $db;
+    private ExceptionsRepository $repo;
 
-    public function __construct(HandlerController $controller) {
+    public function __construct(ExceptionsRepository $repo) {
         parent::__construct();
-        $this->db = $controller;
+        $this->repo = $repo;
     }
+
     #[Override]
     public function handle(): void {
         $ex = new SystemException();
@@ -29,20 +26,25 @@ class DatabaseErrHandler extends AbstractHandler {
         $ex->setExceptionClass(get_class($this->getException()));
         $ex->setLine($this->getLine());
         $ex->setMessage($this->getMessage());
+
         $trace = '';
+
         foreach ($this->getTrace() as $entry) {
-            $trace .= $entry . "\r\n";
+            $trace .= $entry."\r\n";
         }
         $ex->setTrace($trace);
+
         $params = '';
+
         foreach (App::getRequest()->getParams() as $key => $val) {
-            $params .= $key . ' => "'.$val."\"\r\n";
+            $params .= $key.' => "'.$val."\"\r\n";
         }
+
         if (strlen($params) != 0) {
             $ex->setParameters($params);
         }
         $ex->setUrl(App::getRequest()->getRequestedURI());
-        $this->db->addSystemException($ex);
+        $this->repo->add($ex);
     }
 
     #[Override]
