@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.0.1](https://github.com/OSHCO/db-exceptions-logger/compare/v2.0.0...v2.0.1) (2026-05-20)
+
+
+### Features
+
+* add portal_id support for per-portal exception tracking ([cb3463e](https://github.com/OSHCO/db-exceptions-logger/commit/cb3463e0d91c6f994c1265f5d7b3a2530b7653e1))
+
+
+### Miscellaneous Chores
+
+* Merge pull request [#10](https://github.com/OSHCO/db-exceptions-logger/issues/10) from OSHCO/dev ([88ea498](https://github.com/OSHCO/db-exceptions-logger/commit/88ea4981eb38015fb3db4e689aad7794b0aabb7f))
+
 ## [2.0.0](https://github.com/OSHCO/db-exceptions-logger/compare/v1.3.1...v2.0.0) (2026-05-10)
 
 
