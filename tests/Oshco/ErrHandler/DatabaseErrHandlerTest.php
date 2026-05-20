@@ -112,4 +112,27 @@ class DatabaseErrHandlerTest extends TestCase {
         $this->assertEquals('second', $this->repo->lastException->getMessage());
         $this->assertEquals(2, $this->repo->callCount);
     }
+
+    public function testHandleSetsPortalIdFromResolver() {
+        DatabaseErrHandler::setPortalIdResolver(fn() => 42);
+        $this->handler->setException(new Exception('portal err'));
+        $this->handler->handle();
+        $this->assertEquals(42, $this->repo->lastException->getPortalId());
+        DatabaseErrHandler::setPortalIdResolver(null);
+    }
+
+    public function testHandlePortalIdNullWhenNoResolver() {
+        DatabaseErrHandler::setPortalIdResolver(null);
+        $this->handler->setException(new Exception('no portal'));
+        $this->handler->handle();
+        $this->assertNull($this->repo->lastException->getPortalId());
+    }
+
+    public function testHandlePortalIdNullWhenResolverReturnsNull() {
+        DatabaseErrHandler::setPortalIdResolver(fn() => null);
+        $this->handler->setException(new Exception('null portal'));
+        $this->handler->handle();
+        $this->assertNull($this->repo->lastException->getPortalId());
+        DatabaseErrHandler::setPortalIdResolver(null);
+    }
 }

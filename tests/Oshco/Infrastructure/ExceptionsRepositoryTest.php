@@ -89,6 +89,32 @@ class ExceptionsRepositoryTest extends TestCase {
         $this->assertEquals('"A" => "B"', $added->getParameters());
     }
 
+    public function test03_addWithPortalId() {
+        $ex = $this->createTestException();
+        $ex->setPortalId(5);
+
+        self::getRepo()->add($ex);
+        $added = self::getRepo()->getLast();
+        $this->assertEquals(5, $added->getPortalId());
+    }
+
+    public function test04_getByPortal() {
+        $ex = $this->createTestException();
+        $ex->setPortalId(99);
+        self::getRepo()->add($ex);
+        self::getRepo()->add($ex);
+
+        $results = self::getRepo()->getByPortal(99, 1, 10);
+        $this->assertCount(2, $results);
+        $this->assertEquals(99, $results[0]->getPortalId());
+
+        $count = self::getRepo()->countByPortal(99);
+        $this->assertEquals(2, $count);
+
+        $empty = self::getRepo()->getByPortal(999, 1, 10);
+        $this->assertCount(0, $empty);
+    }
+
     private function createTestException(): SystemException {
         $ex = new SystemException();
         $ex->setCode(33);

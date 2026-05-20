@@ -21,6 +21,7 @@ class SystemException implements JsonI {
     private $parameters;
     private $trace;
     private $url;
+    private $portalId;
 
     public function getClass() {
         return $this->class;
@@ -80,6 +81,10 @@ class SystemException implements JsonI {
         return $this->url;
     }
 
+    public function getPortalId() {
+        return $this->portalId;
+    }
+
     public function setClass($class) {
         $this->class = $class;
     }
@@ -124,6 +129,10 @@ class SystemException implements JsonI {
         $this->url = $url;
     }
 
+    public function setPortalId($portalId) {
+        $this->portalId = $portalId;
+    }
+
     public static function map(array $record) {
         if (self::$RecordMapper === null || count(array_keys($record)) != self::$RecordMapper->getSettersMapCount()) {
             self::$RecordMapper = new RecordMapper(self::class, array_keys($record));
@@ -144,7 +153,8 @@ class SystemException implements JsonI {
             'message' => $this->getMessage(),
             'parameters' => $this->getParameters(),
             'trace' => $this->getTrace(),
-            'url' => $this->getUrl()
+            'url' => $this->getUrl(),
+            'portalId' => $this->getPortalId(),
         ]);
     }
 }

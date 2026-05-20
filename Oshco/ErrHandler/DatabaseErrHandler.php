@@ -12,10 +12,21 @@ use WebFiori\Framework\App;
  */
 class DatabaseErrHandler extends AbstractHandler {
     private ExceptionsRepository $repo;
+    private static $portalIdResolver = null;
 
     public function __construct(ExceptionsRepository $repo) {
         parent::__construct();
         $this->repo = $repo;
+    }
+
+    /**
+     * Sets a callable that returns the current portal ID.
+     *
+     * The callable should return an int or null.
+     * Example: DatabaseErrHandler::setPortalIdResolver(fn() => $_SESSION['portal-id'] ?? null);
+     */
+    public static function setPortalIdResolver(?callable $resolver): void {
+        self::$portalIdResolver = $resolver;
     }
 
     #[Override]
@@ -44,6 +55,12 @@ class DatabaseErrHandler extends AbstractHandler {
             $ex->setParameters($params);
         }
         $ex->setUrl(App::getRequest()->getRequestedURI());
+
+        if (self::$portalIdResolver !== null) {
+            $portalId = call_user_func(self::$portalIdResolver);
+            $ex->setPortalId($portalId);
+        }
+
         $this->repo->add($ex);
     }
 

@@ -18,5 +18,6 @@ use WebFiori\Database\DataType;
 #[Column(name: 'url', type: DataType::NVARCHAR, size: 256, nullable: true)]
 #[Column(name: 'parameters', type: DataType::NVARCHAR, size: 1024, nullable: true)]
 #[Column(name: 'trace', type: DataType::NVARCHAR, size: 1024)]
+#[Column(name: 'portal_id', type: DataType::INT, nullable: true, comment: 'The portal where the exception occurred.')]
 class SystemExceptionsTable {
 }

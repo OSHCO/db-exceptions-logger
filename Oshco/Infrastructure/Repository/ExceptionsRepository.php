@@ -36,6 +36,7 @@ class ExceptionsRepository {
             'url' => $entity->getUrl(),
             'parameters' => $entity->getParameters(),
             'trace' => substr($entity->getTrace() ?? '', 0, 1024),
+            'portal-id' => $entity->getPortalId(),
         ])->execute();
     }
 
@@ -83,6 +84,26 @@ class ExceptionsRepository {
     public function count(): int {
         return $this->db->table(self::TABLE)
                 ->selectCount()
+                ->execute()
+                ->getRows()[0]['count'];
+    }
+
+    public function getByPortal(int $portalId, int $page = 1, int $size = 10): array {
+        return $this->db->table(self::TABLE)
+                ->select()
+                ->where('portal-id', $portalId)
+                ->page($page, $size)
+                ->orderBy(['id'])
+                ->execute()
+                ->map(function (array $record) {
+                    return SystemException::map($record);
+                })->toArray();
+    }
+
+    public function countByPortal(int $portalId): int {
+        return $this->db->table(self::TABLE)
+                ->selectCount()
+                ->where('portal-id', $portalId)
                 ->execute()
                 ->getRows()[0]['count'];
     }
