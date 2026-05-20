@@ -1,4 +1,5 @@
 <?php
+
 namespace Oshco\Entity;
 
 use WebFiori\Database\Entity\RecordMapper;
@@ -6,7 +7,10 @@ use WebFiori\Json\Json;
 use WebFiori\Json\JsonI;
 
 /**
- * An entity class which maps to a record in the table 'system_exceptions'.
+ * Entity representing a logged system exception record.
+ *
+ * Maps to a row in the `system_exceptions` table. Includes a SHA-256 hash
+ * computed from the exception's key properties for deduplication purposes.
  */
 class SystemException implements JsonI {
     private static $RecordMapper;
@@ -21,23 +25,51 @@ class SystemException implements JsonI {
     private $parameters;
     private $trace;
     private $url;
+    private $portalId;
 
+    /**
+     * Returns the class where the exception was thrown.
+     *
+     * @return string|null
+     */
     public function getClass() {
         return $this->class;
     }
 
+    /**
+     * Returns the exception code.
+     *
+     * @return int|null
+     */
     public function getCode() {
         return $this->code;
     }
 
+    /**
+     * Returns the date/time when the exception was logged.
+     *
+     * @return string|null
+     */
     public function getDate() {
         return $this->date;
     }
 
+    /**
+     * Returns the fully-qualified class name of the exception.
+     *
+     * @return string|null
+     */
     public function getExceptionClass() {
         return $this->exceptionClass;
     }
 
+    /**
+     * Computes a SHA-256 hash from the exception's key properties.
+     *
+     * Used for deduplication — identical exceptions produce the same hash.
+     *
+     * @return string A 64-character hex string.
+     */
     public function computeHash(): string {
         return hash('sha256', $this->getClass()
                 .$this->getCode()
@@ -48,6 +80,11 @@ class SystemException implements JsonI {
                 .$this->getUrl());
     }
 
+    /**
+     * Returns the hash of the exception. Computes it if not already set.
+     *
+     * @return string
+     */
     public function getHash() {
         if ($this->hash === null) {
             $this->hash = $this->computeHash();
@@ -56,28 +93,67 @@ class SystemException implements JsonI {
         return $this->hash;
     }
 
+    /**
+     * Returns the auto-increment ID of the record.
+     *
+     * @return int|null
+     */
     public function getId() {
         return $this->id;
     }
 
+    /**
+     * Returns the line number where the exception was thrown.
+     *
+     * @return int|null
+     */
     public function getLine() {
         return $this->line;
     }
 
+    /**
+     * Returns the exception message.
+     *
+     * @return string|null
+     */
     public function getMessage() {
         return $this->message;
     }
 
+    /**
+     * Returns the request parameters at the time of the exception.
+     *
+     * @return string|null
+     */
     public function getParameters() {
         return $this->parameters;
     }
 
+    /**
+     * Returns the stack trace.
+     *
+     * @return string|null
+     */
     public function getTrace() {
         return $this->trace;
     }
 
+    /**
+     * Returns the request URL at the time of the exception.
+     *
+     * @return string|null
+     */
     public function getUrl() {
         return $this->url;
+    }
+
+    /**
+     * Returns the portal ID where the exception occurred.
+     *
+     * @return int|null Null if no portal context was available.
+     */
+    public function getPortalId() {
+        return $this->portalId;
     }
 
     public function setClass($class) {
@@ -124,6 +200,22 @@ class SystemException implements JsonI {
         $this->url = $url;
     }
 
+    /**
+     * Sets the portal ID where the exception occurred.
+     *
+     * @param int|null $portalId
+     */
+    public function setPortalId($portalId) {
+        $this->portalId = $portalId;
+    }
+
+    /**
+     * Maps a database record array to a SystemException instance.
+     *
+     * @param array $record Associative array from the database.
+     *
+     * @return SystemException
+     */
     public static function map(array $record) {
         if (self::$RecordMapper === null || count(array_keys($record)) != self::$RecordMapper->getSettersMapCount()) {
             self::$RecordMapper = new RecordMapper(self::class, array_keys($record));
@@ -132,6 +224,11 @@ class SystemException implements JsonI {
         return self::$RecordMapper->map($record);
     }
 
+    /**
+     * Returns a JSON representation of the exception.
+     *
+     * @return Json
+     */
     public function toJSON(): Json {
         return new Json([
             'class' => $this->getClass(),
@@ -144,7 +241,8 @@ class SystemException implements JsonI {
             'message' => $this->getMessage(),
             'parameters' => $this->getParameters(),
             'trace' => $this->getTrace(),
-            'url' => $this->getUrl()
+            'url' => $this->getUrl(),
+            'portalId' => $this->getPortalId(),
         ]);
     }
 }
