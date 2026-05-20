@@ -6,6 +6,12 @@ use WebFiori\Database\Attributes\Column;
 use WebFiori\Database\Attributes\Table;
 use WebFiori\Database\DataType;
 
+/**
+ * Database schema definition for the `system_exceptions` table.
+ *
+ * This table stores logged system exceptions including their stack trace,
+ * request context, and an optional portal association.
+ */
 #[Table(name: 'system_exceptions', comment: 'Stores logged system exceptions.')]
 #[Column(name: 'id', type: DataType::INT, primary: true, identity: true)]
 #[Column(name: 'hash', type: DataType::NVARCHAR, size: 128)]

@@ -1,6 +1,6 @@
 # Database Exceptions Logger
 
-A [WebFiori](https://webfiori.com) framework extension that logs exceptions to a database. Currently supports SQL Server only.
+A [WebFiori](https://webfiori.com) framework extension that logs exceptions to a database with optional per-portal tracking. Currently supports SQL Server only.
 
 ## Requirements
 
@@ -39,6 +39,22 @@ $repo = new ExceptionsRepository($db);
 Handler::registerHandler(new DatabaseErrHandler($repo));
 ```
 
+### 3. (Optional) Configure portal tracking
+
+To associate exceptions with a specific portal, set a resolver callable:
+
+```php
+use Oshco\ErrHandler\DatabaseErrHandler;
+use WebFiori\Framework\Session\SessionsManager;
+
+DatabaseErrHandler::setPortalIdResolver(function () {
+    $session = SessionsManager::getActiveSession();
+    return $session?->get('portal-id');
+});
+```
+
+The resolver is called when an exception occurs. It should return an `int` (portal ID) or `null`.
+
 ## Usage
 
 ### Querying logged exceptions
@@ -54,8 +70,8 @@ $repo = new ExceptionsRepository($db);
 // Get total count
 $count = $repo->count();
 
-// Get paginated list (page 0, 10 per page)
-$exceptions = $repo->getAll(0, 10);
+// Get paginated list (page 1, 10 per page)
+$exceptions = $repo->getAll(1, 10);
 
 // Get by ID
 $exception = $repo->getById(1);
@@ -65,36 +81,68 @@ $latest = $repo->getLast();
 
 // Check if an exception with a given hash exists
 $exists = $repo->existsByHash($hashString);
+
+// Filter by portal
+$portalExceptions = $repo->getByPortal(portalId: 1, page: 1, size: 10);
+$portalCount = $repo->countByPortal(portalId: 1);
 ```
 
 ### Entity properties
 
 Each `SystemException` entity exposes:
 
-- `getId()` — auto-increment ID
-- `getHash()` — SHA-256 hash for deduplication
-- `getDate()` — timestamp when the exception was logged
-- `getCode()` — exception code
-- `getClass()` — class where the exception was thrown
-- `getExceptionClass()` — the exception's class name
-- `getMessage()` — exception message
-- `getLine()` — line number
-- `getUrl()` — request URL
-- `getParameters()` — request parameters
-- `getTrace()` — stack trace
+| Method | Description |
+|--------|-------------|
+| `getId()` | Auto-increment ID |
+| `getHash()` | SHA-256 hash for deduplication |
+| `getDate()` | Timestamp when the exception was logged |
+| `getCode()` | Exception code |
+| `getClass()` | Class where the exception was thrown |
+| `getExceptionClass()` | The exception's fully-qualified class name |
+| `getMessage()` | Exception message |
+| `getLine()` | Line number |
+| `getUrl()` | Request URL |
+| `getParameters()` | Request parameters |
+| `getTrace()` | Stack trace |
+| `getPortalId()` | Portal ID (null if not set) |
 
 ## How It Works
 
-When an exception occurs, `DatabaseErrHandler` captures the exception details (code, class, message, file, line, stack trace, request URL, and parameters), computes a SHA-256 hash for deduplication, and stores everything in the `system_exceptions` table via `ExceptionsRepository`.
+When an exception occurs, `DatabaseErrHandler`:
+
+1. Captures exception details (code, class, message, file, line, stack trace)
+2. Captures request context (URL, parameters)
+3. Resolves the portal ID via the configured resolver (if set)
+4. Computes a SHA-256 hash for deduplication
+5. Stores everything in the `system_exceptions` table via `ExceptionsRepository`
+
+## Database Schema
+
+| Column | Type | Nullable | Description |
+|--------|------|----------|-------------|
+| `id` | INT (PK, identity) | No | Auto-increment ID |
+| `hash` | NVARCHAR(128) | No | SHA-256 hash for deduplication |
+| `date` | DATETIME2 | No | Timestamp (defaults to now) |
+| `code` | INT | No | Exception code |
+| `class` | VARCHAR(128) | No | Class where exception was thrown |
+| `exception_class` | VARCHAR(128) | No | Exception class name |
+| `message` | NVARCHAR(256) | No | Exception message |
+| `line` | INT | No | Line number |
+| `url` | NVARCHAR(256) | Yes | Request URL |
+| `parameters` | NVARCHAR(1024) | Yes | Request parameters |
+| `trace` | NVARCHAR(1024) | No | Stack trace |
+| `portal_id` | INT | Yes | Portal where exception occurred |
 
 ## Classes
 
 | Class | Description |
-|---|---|
-| [`DatabaseErrHandler`](Oshco/ErrHandler/DatabaseErrHandler.php) | Error handler that captures exception details and delegates storage to `ExceptionsRepository`. |
-| [`ExceptionsRepository`](Oshco/Infrastructure/Repository/ExceptionsRepository.php) | Repository providing CRUD operations on the `system_exceptions` table. |
-| [`SystemExceptionsTable`](Oshco/Infrastructure/Schema/SystemExceptionsTable.php) | Attribute-based MSSQL table schema definition for `system_exceptions`. |
-| [`SystemException`](Oshco/Entity/SystemException.php) | Entity representing a logged exception record. |
+|-------|-------------|
+| `DatabaseErrHandler` | Error handler that captures exceptions and delegates storage to the repository. Supports a configurable portal ID resolver. |
+| `ExceptionsRepository` | Repository providing CRUD and filtering operations on the `system_exceptions` table. |
+| `SystemExceptionsTable` | Attribute-based MSSQL table schema definition. |
+| `SystemException` | Entity representing a logged exception record. |
+| `CreateSystemExceptionsTable` | Migration that creates the base table. |
+| `AlterSystemExceptionsAddPortalId` | Migration that adds the `portal_id` column (safe for existing tables). |
 
 ## Running Tests
 
