@@ -75,9 +75,7 @@ class SystemException implements JsonI {
                 .$this->getCode()
                 .$this->getExceptionClass()
                 .$this->getLine()
-                .$this->getMessage()
-                .$this->getTrace()
-                .$this->getUrl());
+                .$this->getMessage());
     }
 
     /**
