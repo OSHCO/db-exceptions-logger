@@ -155,3 +155,30 @@ SA_SQL_SERVER_PASSWORD='<your-password>' composer test
 ## License
 
 MIT
+
+### Statistics Methods
+
+All statistics methods accept optional `$from` and `$to` date parameters (ISO format) for filtering by date range.
+
+```php
+// Count by exception class
+$stats = $repo->getStatsByExceptionClass('2026-01-01', '2026-12-31', limit: 10);
+
+// Count by class + line (pinpoints exact code location)
+$stats = $repo->getStatsByClassAndLine();
+
+// Count by portal
+$stats = $repo->getStatsByPortal();
+
+// Count by URL (which endpoints fail most)
+$stats = $repo->getStatsByUrl();
+
+// Daily error trend
+$stats = $repo->getStatsByDay('2026-06-01', '2026-06-30');
+
+// Top recurring errors (grouped by hash)
+$stats = $repo->getTopRecurring();
+
+// Total count in date range
+$count = $repo->countInRange('2026-06-01', '2026-06-30');
+```

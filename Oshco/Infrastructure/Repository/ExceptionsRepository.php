@@ -10,7 +10,8 @@ use WebFiori\Database\Database;
 /**
  * Repository for CRUD operations on the `system_exceptions` table.
  *
- * Provides methods to add, retrieve, count, and filter logged exceptions.
+ * Provides methods to add, retrieve, count, and filter logged exceptions,
+ * as well as statistical aggregations with optional date range filtering.
  */
 class ExceptionsRepository {
     const TABLE = 'system_exceptions';
@@ -109,7 +110,7 @@ class ExceptionsRepository {
     }
 
     /**
-     * Retrieves a paginated list of all exceptions.
+     * Retrieves a paginated list of all exceptions, newest first.
      *
      * @param int $page Page number (1-based).
      * @param int $size Number of records per page.
@@ -120,7 +121,7 @@ class ExceptionsRepository {
         return $this->db->table(self::TABLE)
                 ->select()
                 ->page($page, $size)
-                ->orderBy(['id'])
+                ->orderBy(['id' => 'desc'])
                 ->execute()
                 ->map(function (array $record) {
                     return SystemException::map($record);
@@ -140,7 +141,7 @@ class ExceptionsRepository {
     }
 
     /**
-     * Retrieves exceptions filtered by portal ID.
+     * Retrieves exceptions filtered by portal ID, newest first.
      *
      * @param int $portalId The portal ID to filter by.
      * @param int $page Page number (1-based).
@@ -153,7 +154,7 @@ class ExceptionsRepository {
                 ->select()
                 ->where('portal-id', $portalId)
                 ->page($page, $size)
-                ->orderBy(['id'])
+                ->orderBy(['id' => 'desc'])
                 ->execute()
                 ->map(function (array $record) {
                     return SystemException::map($record);
@@ -173,5 +174,151 @@ class ExceptionsRepository {
                 ->where('portal-id', $portalId)
                 ->execute()
                 ->getRows()[0]['count'];
+    }
+
+    /**
+     * Returns exception counts grouped by exception class.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     * @param int $limit Max results.
+     *
+     * @return array [['exception_class' => '...', 'count' => N], ...]
+     */
+    public function getStatsByExceptionClass(?string $from = null, ?string $to = null, int $limit = 10): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT TOP $limit exception_class, COUNT(*) as [count] FROM system_exceptions $where GROUP BY exception_class ORDER BY [count] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns exception counts grouped by class and line.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     * @param int $limit Max results.
+     *
+     * @return array [['class' => '...', 'line' => N, 'count' => N], ...]
+     */
+    public function getStatsByClassAndLine(?string $from = null, ?string $to = null, int $limit = 10): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT TOP $limit class, line, COUNT(*) as [count] FROM system_exceptions $where GROUP BY class, line ORDER BY [count] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns exception counts grouped by portal ID.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     *
+     * @return array [['portal_id' => N, 'count' => N], ...]
+     */
+    public function getStatsByPortal(?string $from = null, ?string $to = null): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT portal_id, COUNT(*) as [count] FROM system_exceptions $where GROUP BY portal_id ORDER BY [count] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns exception counts grouped by URL.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     * @param int $limit Max results.
+     *
+     * @return array [['url' => '...', 'count' => N], ...]
+     */
+    public function getStatsByUrl(?string $from = null, ?string $to = null, int $limit = 10): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT TOP $limit url, COUNT(*) as [count] FROM system_exceptions $where GROUP BY url ORDER BY [count] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns exception counts grouped by day.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     *
+     * @return array [['date' => '2026-06-07', 'count' => N], ...]
+     */
+    public function getStatsByDay(?string $from = null, ?string $to = null): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT CAST(date AS DATE) as [date], COUNT(*) as [count] FROM system_exceptions $where GROUP BY CAST(date AS DATE) ORDER BY [date] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns top recurring exceptions grouped by hash.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     * @param int $limit Max results.
+     *
+     * @return array [['hash' => '...', 'message' => '...', 'class' => '...', 'line' => N, 'count' => N], ...]
+     */
+    public function getTopRecurring(?string $from = null, ?string $to = null, int $limit = 10): array {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT TOP $limit hash, MAX(message) as message, MAX(class) as class, MAX(line) as line, COUNT(*) as [count] FROM system_exceptions $where GROUP BY hash HAVING COUNT(*) > 1 ORDER BY [count] DESC";
+
+        return $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+    }
+
+    /**
+     * Returns total exception count within a date range.
+     *
+     * @param string|null $from Start date (inclusive), ISO format.
+     * @param string|null $to End date (inclusive), ISO format.
+     *
+     * @return int
+     */
+    public function countInRange(?string $from = null, ?string $to = null): int {
+        $where = $this->buildDateWhere($from, $to);
+        $sql = "SELECT COUNT(*) as [count] FROM system_exceptions $where";
+        $rows = $this->db->raw($sql, $this->buildDateParams($from, $to))->execute()->getRows();
+
+        return $rows[0]['count'] ?? 0;
+    }
+
+    /**
+     * Builds the WHERE clause for date range filtering.
+     */
+    private function buildDateWhere(?string $from, ?string $to): string {
+        if ($from !== null && $to !== null) {
+            return 'WHERE date >= ? AND date <= ?';
+        }
+
+        if ($from !== null) {
+            return 'WHERE date >= ?';
+        }
+
+        if ($to !== null) {
+            return 'WHERE date <= ?';
+        }
+
+        return '';
+    }
+
+    /**
+     * Builds the parameter array for date range queries.
+     */
+    private function buildDateParams(?string $from, ?string $to): array {
+        $params = [];
+
+        if ($from !== null) {
+            $params[] = $from;
+        }
+
+        if ($to !== null) {
+            $params[] = $to;
+        }
+
+        return $params;
     }
 }
