@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/OSHCO/db-exceptions-logger/compare/v2.0.1...v2.1.0) (2026-06-07)
+
+
+### Features
+
+* add statistics methods and fix hash computation ([a673fa3](https://github.com/OSHCO/db-exceptions-logger/commit/a673fa3d17fe184d319d85e8ab715f8b46f481c3))
+* add statistics methods and fix hash computation ([4952b1a](https://github.com/OSHCO/db-exceptions-logger/commit/4952b1a3c2f18c150260e9826cb025f989660d51))
+
 ## [2.0.1](https://github.com/OSHCO/db-exceptions-logger/compare/v2.0.0...v2.0.1) (2026-05-20)
 
 
