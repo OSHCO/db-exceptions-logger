@@ -51,11 +51,11 @@ class ExceptionsRepository {
             'code' => $entity->getCode(),
             'class' => $entity->getClass(),
             'exception-class' => $entity->getExceptionClass(),
-            'message' => substr($entity->getMessage() ?? '', 0, 256),
+            'message' => substr($entity->getMessage() ?? '', 0, 2048),
             'line' => $entity->getLine(),
             'url' => $entity->getUrl(),
             'parameters' => $entity->getParameters(),
-            'trace' => substr($entity->getTrace() ?? '', 0, 1024),
+            'trace' => substr($entity->getTrace() ?? '', 0, 2048),
             'portal-id' => $entity->getPortalId(),
         ])->execute();
     }

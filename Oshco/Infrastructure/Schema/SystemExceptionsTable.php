@@ -19,11 +19,11 @@ use WebFiori\Database\DataType;
 #[Column(name: 'code', type: DataType::INT)]
 #[Column(name: 'class', type: DataType::VARCHAR, size: 128)]
 #[Column(name: 'exception_class', type: DataType::VARCHAR, size: 128)]
-#[Column(name: 'message', type: DataType::NVARCHAR, size: 256)]
+#[Column(name: 'message', type: DataType::NVARCHAR, size: 2048)]
 #[Column(name: 'line', type: DataType::INT)]
-#[Column(name: 'url', type: DataType::NVARCHAR, size: 256, nullable: true)]
-#[Column(name: 'parameters', type: DataType::NVARCHAR, size: 1024, nullable: true)]
-#[Column(name: 'trace', type: DataType::NVARCHAR, size: 1024)]
+#[Column(name: 'url', type: DataType::NVARCHAR, size: 2048, nullable: true)]
+#[Column(name: 'parameters', type: DataType::NVARCHAR, size: 2048, nullable: true)]
+#[Column(name: 'trace', type: DataType::NVARCHAR, size: 2048)]
 #[Column(name: 'portal_id', type: DataType::INT, nullable: true, comment: 'The portal where the exception occurred.')]
 class SystemExceptionsTable {
 }
