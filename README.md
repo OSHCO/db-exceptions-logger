@@ -5,7 +5,7 @@ A [WebFiori](https://webfiori.com) framework extension that logs exceptions to a
 ## Requirements
 
 - PHP 8.1 or later
-- [WebFiori Framework](https://github.com/WebFiori/framework) v3.0.0-RC
+- [WebFiori Framework](https://github.com/WebFiori/framework) v3.0+
 - SQL Server with ODBC Driver 18
 
 ## Installation
