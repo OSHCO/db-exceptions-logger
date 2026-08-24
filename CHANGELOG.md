@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.1](https://github.com/OSHCO/db-exceptions-logger/compare/v2.1.0...v2.1.1) (2026-08-24)
+
+
+### Features
+
+* increase column sizes to 2048 for better error logging ([035e6fe](https://github.com/OSHCO/db-exceptions-logger/commit/035e6fef04008b144008e541c0358c98bb36afaf))
+
+
+### Miscellaneous Chores
+
+* Release ([c3e5540](https://github.com/OSHCO/db-exceptions-logger/commit/c3e5540f08b591fad601d015d82580e0b91cf174))
+* update framework constraint from ~3.0.0-RC@RC to ^3.0 ([8876c8e](https://github.com/OSHCO/db-exceptions-logger/commit/8876c8edfc6a45836197d7b628a3e0a46065422d))
+
 ## [2.1.0](https://github.com/OSHCO/db-exceptions-logger/compare/v2.0.1...v2.1.0) (2026-06-07)
 
 
