@@ -126,11 +126,11 @@ When an exception occurs, `DatabaseErrHandler`:
 | `code` | INT | No | Exception code |
 | `class` | VARCHAR(128) | No | Class where exception was thrown |
 | `exception_class` | VARCHAR(128) | No | Exception class name |
-| `message` | NVARCHAR(256) | No | Exception message |
+| `message` | NVARCHAR(2048) | No | Exception message |
 | `line` | INT | No | Line number |
-| `url` | NVARCHAR(256) | Yes | Request URL |
-| `parameters` | NVARCHAR(1024) | Yes | Request parameters |
-| `trace` | NVARCHAR(1024) | No | Stack trace |
+| `url` | NVARCHAR(2048) | Yes | Request URL |
+| `parameters` | NVARCHAR(2048) | Yes | Request parameters |
+| `trace` | NVARCHAR(2048) | No | Stack trace |
 | `portal_id` | INT | Yes | Portal where exception occurred |
 
 ## Classes
